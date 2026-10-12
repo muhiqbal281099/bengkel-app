@@ -167,7 +167,9 @@
                             </td>
                             <td>{{ $q->montor->name ?? '-' }}</td>
                             <td>
-                                @if($q->status === 'in_service')
+                                @if($q->status === 'completed')
+                                    <span class="badge badge-safe" style="background:#dcfce7; color:#15803d; border:1px solid #86efac;">✅ Siap Bayar</span>
+                                @elseif($q->status === 'in_service')
                                     <span class="badge badge-safe">Dikerjakan</span>
                                 @elseif($q->status === 'checking')
                                     <span class="badge badge-warning">Pengecekan</span>

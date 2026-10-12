@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitor Antrean - {{ $setting->nama_bengkel }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
         /* TEMA LAYANAN PUBLIK: DEFAULT LIGHT MODE */
@@ -84,12 +86,14 @@
             --shadow-card: 0 8px 25px -5px rgba(0, 0, 0, 0.4);
         }
 
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body, input, button {
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
         }
 
         body {
@@ -737,10 +741,10 @@
         setInterval(updateTime, 1000);
         updateTime();
 
-        // Auto Refresh halaman setiap 30 detik untuk memperbarui antrean
+        // Auto Refresh halaman setiap 60 detik untuk memperbarui antrean
         setTimeout(function () {
             window.location.reload();
-        }, 30000);
+        }, 60000);
     </script>
 </body>
 

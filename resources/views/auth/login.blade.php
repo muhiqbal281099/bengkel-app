@@ -7,7 +7,9 @@
         $setting = \App\Models\BengkelSetting::getSettings();
     @endphp
     <title>Login Petugas - {{ $setting->nama_bengkel }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-body: #f1f5f9;
@@ -47,12 +49,14 @@
             --error: #ef4444;
         }
 
-        * {
+        *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body, input, button, select, textarea {
             font-family: 'Outfit', sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {

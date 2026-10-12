@@ -49,18 +49,18 @@
                     <!-- Info -->
                     <div>
                         <div style="font-size: 1.05rem; font-weight: 800; margin-bottom: 0.2rem;">
-                            {{ $queue->kendaraan->merk }} {{ $queue->kendaraan->model }}
+                            {{ $queue->kendaraan?->merk ?? '' }} {{ $queue->kendaraan?->model ?? '' }}
                             <span style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600;">
-                                ({{ $queue->kendaraan->no_polisi }})
+                                ({{ $queue->kendaraan?->no_polisi ?? '-' }})
                             </span>
                         </div>
                         <div style="font-size: 0.9rem; color: var(--text-muted);">
-                            🔧 {{ $queue->service->nama_layanan }}
-                            &bull; Pelanggan: {{ $queue->kendaraan->user->name ?? 'Walk-in' }}
+                            🔧 {{ $queue->service?->nama_layanan ?? 'Servis Umum' }}
+                            &bull; Pelanggan: {{ $queue->kendaraan?->user?->name ?? 'Walk-in' }}
                         </div>
                         @if($queue->catatan_servis)
                             <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 0.3rem;">
-                                📝 {{ Str::limit($queue->catatan_servis, 80) }}
+                                📝 {{ str($queue->catatan_servis)->limit(80) }}
                             </div>
                         @endif
                         <div style="margin-top: 0.5rem;">
@@ -103,7 +103,7 @@
                         </form>
                     @elseif($queue->status === 'in_service')
                         <button type="button" class="btn btn-success btn-sm" style="width: 100%;"
-                                onclick="openCompleteModal('{{ $queue->id }}', '{{ $queue->nomor_antrean }}')">
+                                onclick="openCompleteModal('{{ route('montir.antrean.update-status', $queue) }}', '{{ $queue->nomor_antrean }}')">
                             ✅ Tandai Selesai
                         </button>
                     @endif
@@ -139,12 +139,12 @@
                 <tr>
                     <td><span style="font-weight: 800; color: var(--success);">{{ $q->nomor_antrean }}</span></td>
                     <td>
-                        {{ $q->kendaraan->no_polisi }}<br>
-                        <span style="font-size: 0.82rem; color: var(--text-dim);">{{ $q->kendaraan->merk }} {{ $q->kendaraan->model }}</span>
+                        {{ $q->kendaraan?->no_polisi ?? '-' }}<br>
+                        <span style="font-size: 0.82rem; color: var(--text-dim);">{{ $q->kendaraan?->merk ?? '' }} {{ $q->kendaraan?->model ?? '' }}</span>
                     </td>
-                    <td>{{ $q->service->nama_layanan }}</td>
-                    <td>{{ $q->kendaraan->user->name ?? '—' }}</td>
-                    <td style="color: var(--text-dim); font-size: 0.88rem;">{{ $q->updated_at->format('d/m/Y H:i') }}</td>
+                    <td>{{ $q->service?->nama_layanan ?? 'Servis Umum' }}</td>
+                    <td>{{ $q->kendaraan?->user?->name ?? '—' }}</td>
+                    <td style="color: var(--text-dim); font-size: 0.88rem;">{{ optional($q->updated_at)->format('d/m/Y H:i') ?? '-' }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -181,9 +181,9 @@
 
 @section('scripts')
 <script>
-    function openCompleteModal(queueId, nomerAntrean) {
+    function openCompleteModal(actionUrl, nomerAntrean) {
         document.getElementById('modal-nomer').textContent = nomerAntrean;
-        document.getElementById('form-complete').action = `/montir/antrean/${queueId}/status`;
+        document.getElementById('form-complete').action = actionUrl;
         document.getElementById('modal-complete').classList.add('active');
     }
 

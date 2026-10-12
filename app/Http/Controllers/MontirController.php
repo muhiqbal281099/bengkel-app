@@ -16,25 +16,31 @@ class MontirController extends Controller
     {
         $montirId = auth()->id();
 
-        // Antrean aktif yang ditugaskan ke montir ini (hari ini)
+        // Antrean aktif yang ditugaskan ke montir ini (atau belum ditugaskan mekanik)
         $activeQueues = Queue::with(['kendaraan.user', 'service'])
-            ->where('montor_id', $montirId)
-            ->whereDate('created_at', today())
+            ->where(function ($q) use ($montirId) {
+                $q->where('montor_id', $montirId)
+                    ->orWhereNull('montor_id');
+            })
             ->whereIn('status', ['waiting', 'checking', 'in_service'])
-            ->orderByRaw("CASE status WHEN 'in_service' THEN 1 WHEN 'checking' THEN 2 WHEN 'waiting' THEN 3 END")
+            ->orderByRaw("CASE status WHEN 'in_service' THEN 1 WHEN 'checking' THEN 2 WHEN 'waiting' THEN 3 ELSE 4 END")
+            ->orderBy('id', 'asc')
             ->get();
 
-        // Antrean yang sudah selesai hari ini
+        // Antrean yang selesai hari ini oleh montir ini
         $completedToday = Queue::where('montor_id', $montirId)
-            ->whereDate('created_at', today())
             ->where('status', 'completed')
+            ->where(function ($q) {
+                $q->whereDate('updated_at', today())
+                    ->orWhereDate('created_at', today());
+            })
             ->count();
 
-        // Riwayat 7 hari terakhir
+        // Riwayat servis selesai oleh montir ini (terbaru berdasarkan waktu selesai)
         $history = Queue::with(['kendaraan.user', 'service'])
             ->where('montor_id', $montirId)
             ->where('status', 'completed')
-            ->latest()
+            ->latest('updated_at')
             ->take(20)
             ->get();
 
@@ -46,8 +52,8 @@ class MontirController extends Controller
      */
     public function updateStatus(Request $request, Queue $queue): RedirectResponse
     {
-        // Pastikan montir hanya bisa update antrean yang ditugaskan padanya
-        if ($queue->montor_id !== auth()->id()) {
+        // Pastikan montir hanya bisa update antrean miliknya (atau yang belum memiliki mekanik)
+        if ($queue->montor_id && (int) $queue->montor_id !== (int) auth()->id()) {
             return back()->with('error', 'Anda tidak memiliki izin untuk mengubah antrean ini.');
         }
 
@@ -55,6 +61,11 @@ class MontirController extends Controller
             'status' => ['required', 'in:checking,in_service,completed'],
             'catatan_servis' => ['nullable', 'string', 'max:1000'],
         ]);
+
+        // Jika antrean belum memiliki mekanik, otomatis tugaskan ke montir yang memproses
+        if (! $queue->montor_id) {
+            $validated['montor_id'] = auth()->id();
+        }
 
         $queue->update($validated);
 

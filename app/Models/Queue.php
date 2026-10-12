@@ -35,6 +35,11 @@ class Queue extends Model
         return $this->belongsTo(User::class, 'montor_id');
     }
 
+    public function montir(): BelongsTo
+    {
+        return $this->montor();
+    }
+
     public function transaction(): HasOne
     {
         return $this->hasOne(Transaction::class);

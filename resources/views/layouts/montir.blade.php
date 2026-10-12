@@ -1,10 +1,13 @@
+@php $bSetting = \App\Models\BengkelSetting::getSettings(); @endphp
 <!DOCTYPE html>
 <html lang="id" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Panel Mekanik') - {{ \App\Models\BengkelSetting::getSettings()->nama_bengkel }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>@yield('title', 'Panel Mekanik') - {{ $bSetting->nama_bengkel }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-body: #f8fafc;
@@ -60,9 +63,10 @@
             --shadow-lg: 0 15px 30px rgba(0,0,0,0.6);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body, input, button, select, textarea {
             font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease; }
+        }
 
         body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
 
@@ -180,8 +184,6 @@
     @yield('styles')
 </head>
 <body>
-
-    @php $bSetting = \App\Models\BengkelSetting::getSettings(); @endphp
 
     <nav class="navbar">
         <a href="{{ route('montir.dashboard') }}" class="navbar-brand">
